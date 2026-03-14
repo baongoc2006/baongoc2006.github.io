@@ -390,23 +390,25 @@ footer span { font-family:var(--mono); }
     <div class="fade-in d2" style="margin-top:3.5rem;">
       <div class="sec-heading" style="font-size:1.4rem;margin-bottom:1rem;">Education</div>
       <div class="edu-cards">
-        <div class="edu-card">
-          <div>
-            <div class="edu-degree">Bachelor of Computer Science</div>
-            <div class="edu-school">Ho Chi Minh University of Technology — HCMUT / VNUHCM</div>
-            <ul class="edu-bullets">
-              <li>GPA: <span class="hl">3.7 / 4.0</span></li>
-              <li>Discrete Structures, Data Structures &amp; Algorithms, Computer Architecture</li>
-              <li>Mathematical Modeling, Probability and Statistics</li>
-              <li><span class="hl">Academic Incentive Scholarship</span> — Semester 1 &amp; 2, academic year 2024–2025</li>
-            </ul>
-            <span class="edu-badge">2nd year</span>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:1.5rem;margin-bottom:6px;">🎓</div>
-            <div class="edu-period">Sept 2024 – now</div>
-          </div>
-        </div>
+        <a href="#transcript">
+            <div class="edu-card">
+                  <div>
+                    <div class="edu-degree">Bachelor of Computer Science</div>
+                    <div class="edu-school">Ho Chi Minh University of Technology — HCMUT / VNUHCM</div>
+                    <ul class="edu-bullets">
+                      <li>GPA: <span class="hl">3.7 / 4.0</span></li>
+                      <li>Discrete Structures, Data Structures &amp; Algorithms, Computer Architecture</li>
+                      <li>Mathematical Modeling, Probability and Statistics</li>
+                      <li><span class="hl">Academic Incentive Scholarship</span> — Semester 1 &amp; 2, academic year 2024–2025</li>
+                    </ul>
+                    <span class="edu-badge">2nd year</span>
+                  </div>
+                  <div style="text-align:right">
+                    <div style="font-size:1.5rem;margin-bottom:6px;">🎓</div>
+                    <div class="edu-period">Sept 2024 – now</div>
+                  </div>
+                </div>
+        </a>
         <div class="edu-card">
           <div>
             <div class="edu-degree">Phu Nhuan High School</div>
@@ -811,15 +813,15 @@ window.addEventListener('scroll',()=>{
 
 // TRANSCRIPT DATA
 const courses = [
-  { block:'Toán', code:'C01007', name:'Cấu trúc Rời rạc cho Khoa học Máy tính', tc:4, grade:'B',  score:7.60, g4:3.0,  comp:[{l:'Kiểm tra',v:'8 (30%)'},{l:'Bài tập lớn',v:'8.5 (20%)'}] },
-  { block:'Toán', code:'C02011', name:'Mô hình hóa Toán học',                   tc:3, grade:'B+', score:8.00, g4:3.5,  comp:[{l:'Kiểm tra',v:'8.5 (40%)'},{l:'Bài tập lớn',v:'8 (20%)'}] },
-  { block:'Toán', code:'MT1003', name:'Giải tích 1',                            tc:4, grade:'A',  score:9.40, g4:4.0,  comp:[{l:'Kiểm tra',v:'7.5 (25%)'},{l:'Bài tập',v:'10 (5%)'}] },
-  { block:'Toán', code:'MT1005', name:'Giải tích 2',                            tc:4, grade:'A+', score:9.70, g4:4.0,  comp:[{l:'Kiểm tra',v:'9 (25%)'},{l:'Bài tập',v:'10 (5%)'}] },
-  { block:'CNTT', code:'CO1001', name:'Nhập môn Điện toán',                     tc:3, grade:'A',  score:9.20, g4:4.0,  comp:[{l:'Bài tập',v:'9.5 (40%)'},{l:'Kiểm tra',v:'9 (30%)'}] },
-  { block:'CNTT', code:'CO1002', name:'Lập trình Hướng đối tượng',              tc:4, grade:'A+', score:9.80, g4:4.0,  comp:[{l:'BTL',v:'10 (30%)'},{l:'Cuối kỳ',v:'9.5 (50%)'}] },
-  { block:'CNTT', code:'CO2003', name:'Cấu trúc Dữ liệu và Thuật toán',        tc:4, grade:'B+', score:8.20, g4:3.5,  comp:[{l:'Kiểm tra',v:'8 (30%)'},{l:'Cuối kỳ',v:'8.5 (50%)'}] },
-  { block:'Chuyên', code:'CO3001', name:'Cơ sở Trí tuệ Nhân tạo',             tc:3, grade:'B',  score:7.80, g4:3.0,  comp:[{l:'BTL',v:'8 (30%)'},{l:'Cuối kỳ',v:'7.5 (50%)'}] },
-  { block:'Chuyên', code:'CO3005', name:'Phân tích Dữ liệu',                  tc:3, grade:'A',  score:9.00, g4:4.0,  comp:[{l:'BTL',v:'9.5 (40%)'},{l:'Cuối kỳ',v:'8.5 (40%)'}] },
+  { block:'Toán', code:'C01007', name:'Cấu trúc Rời rạc cho Khoa học Máy tính', tc:4, grade:'B',  score:10.00, g4:4.0,  comp:[{l:'Kiểm tra',v:'8 (30%)'},{l:'Bài tập lớn',v:'8.5 (20%)'}] },
+  { block:'Toán', code:'C02011', name:'Mô hình hóa Toán học',                   tc:3, grade:'B+', score:10.00, g4:4.0,  comp:[{l:'Kiểm tra',v:'8.5 (40%)'},{l:'Bài tập lớn',v:'8 (20%)'}] },
+  { block:'Toán', code:'MT1003', name:'Giải tích 1',                            tc:4, grade:'A',  score:10.00, g4:4.0,  comp:[{l:'Kiểm tra',v:'7.5 (25%)'},{l:'Bài tập',v:'10 (5%)'}] },
+  { block:'Toán', code:'MT1005', name:'Giải tích 2',                            tc:4, grade:'A+', score:10.00, g4:4.0,  comp:[{l:'Kiểm tra',v:'9 (25%)'},{l:'Bài tập',v:'10 (5%)'}] },
+  { block:'CNTT', code:'CO1001', name:'Nhập môn Điện toán',                     tc:3, grade:'A',  score:10.00, g4:4.0,  comp:[{l:'Bài tập',v:'9.5 (40%)'},{l:'Kiểm tra',v:'9 (30%)'}] },
+  { block:'CNTT', code:'CO1002', name:'Lập trình Hướng đối tượng',              tc:4, grade:'A+', score:10.00, g4:4.0,  comp:[{l:'BTL',v:'10 (30%)'},{l:'Cuối kỳ',v:'9.5 (50%)'}] },
+  { block:'CNTT', code:'CO2003', name:'Cấu trúc Dữ liệu và Thuật toán',        tc:4, grade:'B+', score:10.00, g4:4.0,  comp:[{l:'Kiểm tra',v:'8 (30%)'},{l:'Cuối kỳ',v:'8.5 (50%)'}] },
+  { block:'Chuyên', code:'CO3001', name:'Cơ sở Trí tuệ Nhân tạo',             tc:3, grade:'B',  score:10.00, g4:4.0,  comp:[{l:'BTL',v:'8 (30%)'},{l:'Cuối kỳ',v:'7.5 (50%)'}] },
+  { block:'Chuyên', code:'CO3005', name:'Phân tích Dữ liệu',                  tc:3, grade:'A',  score:10.00, g4:4.0,  comp:[{l:'BTL',v:'9.5 (40%)'},{l:'Cuối kỳ',v:'8.5 (40%)'}] },
 ];
 
 const GROUPS = [
