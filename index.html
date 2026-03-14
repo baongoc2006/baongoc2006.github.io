@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Võ Nguyễn Bảo Ngọc</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #0f0f13; --bg2: #16161c; --bg3: #1e1e26; --bg4: #252530;
+  --text: #e8e6f0; --muted: #7a778f; --muted2: #5a5870;
+  --accent: #6c63ff; --accent2: #8b85ff; --accent3: #b8b4ff;
+  --green: #4ade80; --blue: #60a5fa; --purple: #c084fc;
+  --amber: #fbbf24; --red: #f87171; --teal: #2dd4bf;
+  --border: rgba(255,255,255,0.06); --border2: rgba(255,255,255,0.1);
+  --sans: 'Inter', sans-serif; --mono: 'Space Mono', monospace;
+  --radius: 8px; --radius-lg: 12px;
+}
+html { scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; cursor: none; }
+
+/* CURSOR */
+#cur-dot { width:8px;height:8px;border-radius:50%;background:var(--accent2);position:fixed;top:0;left:0;z-index:9999;pointer-events:none;transform:translate(-50%,-50%);transition:width .15s,height .15s; }
+#cur-ring { width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(139,133,255,.4);position:fixed;top:0;left:0;z-index:9998;pointer-events:none;transform:translate(-50%,-50%); }
+body.hov #cur-dot { width:12px;height:12px;background:var(--accent); }
+body.hov #cur-ring { width:48px;height:48px;border-color:rgba(108,99,255,.3); }
+
+/* LOADER */
+#loader { position:fixed;inset:0;z-index:9997;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px;transition:opacity .6s,visibility .6s; }
+#loader.done { opacity:0;visibility:hidden;pointer-events:none; }
+.loader-name { font-size:1.4rem;font-weight:600;letter-spacing:-0.02em;color:var(--text); }
+.loader-name span { color:var(--accent2); }
+.loader-bar-wrap { width:200px;height:2px;background:var(--bg4);border-radius:1px;overflow:hidden; }
+.loader-bar { height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:1px;animation:loadBar .9s ease forwards; }
+@keyframes loadBar { to { width:100%; } }
+
+/* NAV */
+nav { position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(15,15,19,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between; }
+.nav-left { display:flex;align-items:center;gap:2rem; }
+.nav-logo { width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff;letter-spacing:-.5px;flex-shrink:0;text-decoration:none; }
+.nav-links { display:flex;gap:2px;list-style:none; }
+.nav-links a { padding:6px 11px;border-radius:6px;font-size:.8rem;color:var(--muted);text-decoration:none;font-weight:500;transition:color .2s,background .2s; }
+.nav-links a:hover,.nav-links a.active { color:var(--text);background:var(--bg3); }
+.nav-links a.active { color:var(--accent2); }
+.nav-status { display:flex;align-items:center;gap:7px;font-size:.72rem;color:var(--muted);font-family:var(--mono); }
+.status-dot { width:6px;height:6px;border-radius:50%;background:var(--green);animation:ping 2s ease-in-out infinite; }
+@keyframes ping { 0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.4)} 50%{box-shadow:0 0 0 4px rgba(74,222,128,0)} }
+
+main { padding-top:60px; }
+
+/* HOME */
+#home { min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;padding:2rem; }
+.home-glow { position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(108,99,255,.12) 0%,transparent 70%);pointer-events:none;animation:glowPulse 4s ease-in-out infinite; }
+@keyframes glowPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+.home-grid-bg { position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:50px 50px;mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,black,transparent); }
+.home-content { position:relative;z-index:1; }
+.home-badge { display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:100px;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.25);font-size:.75rem;color:var(--accent3);margin-bottom:1.5rem;letter-spacing:.05em; }
+.home-badge::before { content:'';width:6px;height:6px;border-radius:50%;background:var(--green);animation:ping 2s ease-in-out infinite; }
+.home-title { font-size:clamp(2.8rem,7vw,5.5rem);font-weight:700;letter-spacing:-.04em;line-height:1.05;margin-bottom:1.2rem; }
+.home-title .name { color:var(--accent2); }
+.home-sub { font-size:1rem;color:var(--muted);max-width:500px;margin:0 auto 2.2rem;line-height:1.7; }
+.home-tags { display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:2rem; }
+.home-tag { padding:4px 12px;border-radius:100px;background:var(--bg3);border:1px solid var(--border2);font-size:.72rem;color:var(--muted);font-family:var(--mono); }
+.home-btns { display:flex;gap:10px;justify-content:center;flex-wrap:wrap; }
+.btn { padding:10px 22px;border-radius:var(--radius);font-size:.85rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:7px;transition:transform .15s,background .2s,border-color .2s;cursor:pointer;border:none;font-family:var(--sans); }
+.btn:hover { transform:translateY(-1px); }
+.btn-primary { background:var(--accent);color:#fff; }
+.btn-primary:hover { background:var(--accent2); }
+.btn-outline { background:transparent;color:var(--text);border:1px solid var(--border2); }
+.btn-outline:hover { border-color:var(--accent);color:var(--accent2);background:rgba(108,99,255,.05); }
+.home-scroll { position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);font-size:.7rem;color:var(--muted2);letter-spacing:.12em;text-transform:uppercase;font-family:var(--mono);display:flex;flex-direction:column;align-items:center;gap:8px; }
+.home-scroll-line { width:1px;height:40px;background:linear-gradient(to bottom,var(--accent),transparent);animation:scrollLine 1.5s ease-in-out infinite; }
+@keyframes scrollLine { 0%,100%{transform:scaleY(1);opacity:.6} 50%{transform:scaleY(.5);opacity:1} }
+
+/* SECTION BASE */
+.sec-inner { max-width:900px;margin:0 auto; }
+.sec-heading { font-size:clamp(1.6rem,3.5vw,2.2rem);font-weight:700;letter-spacing:-.03em;margin-bottom:2.5rem; }
+
+/* ABOUT */
+#about { padding:5rem 2rem; }
+.about-greeting { font-size:clamp(2rem,5vw,3.2rem);font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-bottom:.8rem; }
+.about-greeting .nc { color:var(--accent2); }
+.about-sub { font-size:.92rem;color:var(--muted);line-height:1.75;max-width:640px;margin-bottom:1rem; }
+
+/* SKILLS */
+.skills-label { font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin:2rem 0 .8rem; }
+.skills-icons { display:flex;flex-wrap:wrap;gap:10px; }
+.sic { width:68px;height:68px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;font-size:1.5rem;transition:border-color .2s,transform .2s,background .2s;position:relative;cursor:default; }
+.sic:hover { border-color:var(--accent);background:rgba(108,99,255,.08);transform:translateY(-3px); }
+.sic .tt { position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--bg4);border:1px solid var(--border2);padding:4px 10px;border-radius:6px;font-size:.68rem;color:var(--text);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s; }
+.sic:hover .tt { opacity:1; }
+.sic-text { font-size:.82rem;font-weight:700;font-family:var(--mono); }
+.skills-two { display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:.5rem; }
+
+/* TIMELINE (Research & Extracurricular) */
+.timeline { display:flex;flex-direction:column;gap:0; }
+.tl-item {
+  display:grid;
+  grid-template-columns:1fr 2px 1fr;
+  gap:0 2rem;
+  position:relative;
+}
+/* alternating: odd = content left, even = content right */
+.tl-item:nth-child(odd) .tl-content { grid-column:1; grid-row:1; text-align:right; }
+.tl-item:nth-child(odd) .tl-line   { grid-column:2; grid-row:1; }
+.tl-item:nth-child(odd) .tl-meta   { grid-column:3; grid-row:1; text-align:left; padding-top:4px; }
+
+.tl-item:nth-child(even) .tl-meta   { grid-column:1; grid-row:1; text-align:right; padding-top:4px; }
+.tl-item:nth-child(even) .tl-line   { grid-column:2; grid-row:1; }
+.tl-item:nth-child(even) .tl-content { grid-column:3; grid-row:1; text-align:left; }
+
+.tl-line {
+  display:flex;flex-direction:column;align-items:center;
+  position:relative;
+}
+.tl-dot {
+  width:14px;height:14px;border-radius:50%;
+  background:var(--accent);border:3px solid var(--bg);
+  flex-shrink:0;margin-top:4px;
+  box-shadow:0 0 0 1px var(--accent);
+  z-index:1;
+}
+.tl-connector {
+  flex:1;width:2px;background:linear-gradient(to bottom,var(--accent),var(--border));
+  min-height:20px;
+}
+.tl-item:last-child .tl-connector { display:none; }
+
+.tl-content { padding-bottom:2.5rem; }
+.tl-role { font-size:.95rem;font-weight:700;margin-bottom:2px; }
+.tl-org { font-size:.8rem;color:var(--accent2);margin-bottom:.7rem;font-weight:500; }
+.tl-bullets { list-style:none; }
+.tl-bullets li { font-size:.8rem;color:var(--muted);padding:2px 0;line-height:1.65;display:flex;gap:8px;align-items:flex-start; }
+.tl-bullets li::before { content:'▸';color:var(--accent);flex-shrink:0;font-size:.65rem;margin-top:3px; }
+/* for right-aligned */
+.tl-item:nth-child(odd) .tl-bullets li { flex-direction:row-reverse; }
+.tl-item:nth-child(odd) .tl-bullets li::before { margin-top:3px; }
+
+.tl-meta { display:flex;flex-direction:column;gap:8px; }
+.tl-period { font-size:.72rem;color:var(--muted);font-family:var(--mono);white-space:nowrap; }
+.tl-icon-circle {
+  width:46px;height:46px;border-radius:50%;
+  background:var(--bg3);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;flex-shrink:0;
+}
+.tl-item:nth-child(odd) .tl-meta { align-items:flex-start; }
+.tl-item:nth-child(even) .tl-meta { align-items:flex-end; }
+
+/* EDUCATION */
+.edu-cards { display:flex;flex-direction:column;gap:12px; }
+.edu-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.4rem;display:grid;grid-template-columns:1fr auto;gap:1.5rem;align-items:start;transition:border-color .2s; }
+.edu-card:hover { border-color:var(--accent); }
+.edu-degree { font-size:.95rem;font-weight:700;margin-bottom:3px; }
+.edu-school { font-size:.8rem;color:var(--accent2);margin-bottom:.8rem;font-weight:500; }
+.edu-bullets { list-style:none; }
+.edu-bullets li { font-size:.78rem;color:var(--muted);padding:2px 0;display:flex;gap:8px; }
+.edu-bullets li::before { content:'•';color:var(--accent2);flex-shrink:0; }
+.edu-bullets .hl { color:var(--green);font-weight:600; }
+.edu-period { font-family:var(--mono);font-size:.7rem;color:var(--muted);text-align:right;white-space:nowrap; }
+.edu-badge { display:inline-block;padding:3px 10px;border-radius:100px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);font-size:.68rem;color:var(--green);font-family:var(--mono);margin-top:6px; }
+
+/* ACHIEVEMENTS */
+.achieve-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px; }
+.achieve-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem;display:flex;gap:12px;align-items:flex-start;transition:border-color .2s; }
+.achieve-card:hover { border-color:var(--accent); }
+.achieve-icon { width:36px;height:36px;border-radius:8px;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.2);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0; }
+.achieve-title { font-size:.82rem;font-weight:600;margin-bottom:2px; }
+.achieve-sub { font-size:.72rem;color:var(--muted);line-height:1.5; }
+
+/* TRANSCRIPT */
+#transcript { padding:5rem 2rem;background:var(--bg); }
+.transcript-inner { max-width:1100px;margin:0 auto; }
+.transcript-header { display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem; }
+.transcript-title { font-size:1.5rem;font-weight:700;letter-spacing:-.02em; }
+.transcript-actions { display:flex;gap:8px;flex-wrap:wrap; }
+.t-btn { padding:6px 14px;border-radius:6px;font-size:.75rem;font-weight:600;border:none;cursor:pointer;font-family:var(--sans);display:flex;align-items:center;gap:6px;transition:opacity .15s,transform .15s; }
+.t-btn:hover { opacity:.85;transform:translateY(-1px); }
+.t-btn-green { background:rgba(74,222,128,.15);color:var(--green);border:1px solid rgba(74,222,128,.25); }
+.t-btn-purple { background:rgba(192,132,252,.15);color:var(--purple);border:1px solid rgba(192,132,252,.25); }
+.t-btn-red { background:rgba(248,113,113,.15);color:var(--red);border:1px solid rgba(248,113,113,.25); }
+.t-btn-blue { background:rgba(96,165,250,.15);color:var(--blue);border:1px solid rgba(96,165,250,.25); }
+.t-tabs { display:flex;gap:4px;margin-bottom:1.2rem;border-bottom:1px solid var(--border);padding-bottom:0; }
+.t-tab { padding:8px 16px;font-size:.82rem;font-weight:500;color:var(--muted);cursor:pointer;border-radius:6px 6px 0 0;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s; }
+.t-tab.active { color:var(--accent2);border-bottom-color:var(--accent2); }
+.t-filters { display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:1.5rem; }
+.t-filter-label { font-size:.75rem;color:var(--muted);font-weight:500;flex-shrink:0; }
+.t-filter-select { background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-size:.78rem;padding:5px 10px;border-radius:6px;outline:none;font-family:var(--sans);min-width:130px; }
+.t-filter-input { background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-size:.78rem;padding:5px 10px;border-radius:6px;outline:none;font-family:var(--sans);width:70px; }
+.t-filter-input::placeholder { color:var(--muted2); }
+.t-filter-sep { font-size:.72rem;color:var(--muted2); }
+.t-filter-clear { padding:5px 12px;border-radius:6px;background:var(--bg4);border:1px solid var(--border2);color:var(--muted);font-size:.75rem;cursor:pointer;font-family:var(--sans);transition:color .2s; }
+.t-filter-clear:hover { color:var(--text); }
+.t-search-wrap { position:relative;flex:1;min-width:180px; }
+.t-search { width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-size:.78rem;padding:6px 12px 6px 30px;border-radius:6px;outline:none;font-family:var(--sans); }
+.t-search::placeholder { color:var(--muted2); }
+.t-search:focus { border-color:var(--accent); }
+.t-search-icon { position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:.72rem;color:var(--muted2);pointer-events:none; }
+.t-stats { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.5rem;margin-bottom:2rem; }
+.t-stats-title { font-size:.82rem;font-weight:600;color:var(--accent2);margin-bottom:1rem;display:flex;align-items:center;gap:6px; }
+.t-stats-grid { display:flex;gap:3rem;flex-wrap:wrap; }
+.t-stat-label { font-size:.72rem;color:var(--muted);margin-bottom:3px; }
+.t-stat-val { font-size:1.6rem;font-weight:700;letter-spacing:-.03em;font-family:var(--mono); }
+.t-stat-val.green { color:var(--green); }
+.t-stat-val.blue { color:var(--blue); }
+.t-stat-val.purple { color:var(--purple); }
+.t-stat-val.muted { color:var(--muted); }
+.t-group { margin-bottom:2.5rem; }
+.t-group-title { font-size:.88rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px; }
+.t-table { width:100%;border-collapse:collapse;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden; }
+.t-table thead tr { background:var(--bg3);border-bottom:1px solid var(--border); }
+.t-table th { padding:10px 14px;font-size:.72rem;font-weight:600;color:var(--muted);text-align:left;letter-spacing:.04em;text-transform:uppercase; }
+.t-table th:last-child { text-align:right; }
+.t-table td { padding:13px 14px;font-size:.82rem;color:var(--text);border-bottom:1px solid var(--border);vertical-align:top; }
+.t-table tr:last-child td { border-bottom:none; }
+.t-table tr:hover td { background:rgba(255,255,255,.02); }
+.t-code { font-family:var(--mono);font-size:.72rem;color:var(--muted); }
+.grade-badge { display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:22px;padding:0 6px;border-radius:5px;font-size:.72rem;font-weight:700;font-family:var(--mono); }
+.grade-A { background:rgba(74,222,128,.15);color:var(--green);border:1px solid rgba(74,222,128,.25); }
+.grade-B { background:rgba(96,165,250,.15);color:var(--blue);border:1px solid rgba(96,165,250,.25); }
+.grade-C { background:rgba(251,191,36,.15);color:var(--amber);border:1px solid rgba(251,191,36,.25); }
+.t-component { font-size:.72rem;color:var(--muted);line-height:1.65; }
+.t-component span { color:var(--text); }
+.link-more { color:var(--accent2);cursor:pointer;font-size:.7rem;text-decoration:underline;text-underline-offset:2px; }
+.t-score { font-family:var(--mono);font-size:.82rem; }
+
+/* CONTACT */
+#contact { padding:5rem 2rem;background:var(--bg2); }
+.contact-inner { max-width:900px;margin:0 auto; }
+.contact-title { font-size:clamp(2rem,5vw,3rem);font-weight:700;letter-spacing:-.03em;margin-bottom:3rem; }
+.contact-grid { display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start; }
+.contact-form-group { margin-bottom:1.2rem; }
+.contact-label { display:block;font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:8px; }
+.contact-input,.contact-textarea { width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-size:.88rem;padding:10px 14px;border-radius:var(--radius);outline:none;font-family:var(--sans);transition:border-color .2s; }
+.contact-input:focus,.contact-textarea:focus { border-color:var(--accent); }
+.contact-input::placeholder,.contact-textarea::placeholder { color:var(--muted2); }
+.contact-textarea { resize:vertical;min-height:140px; }
+.contact-submit { width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:.88rem;font-weight:700;border:none;border-radius:var(--radius);cursor:pointer;font-family:var(--sans);transition:opacity .2s,transform .15s;letter-spacing:.02em; }
+.contact-submit:hover { opacity:.9;transform:translateY(-1px); }
+.contact-visual { display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2rem;padding-top:.5rem; }
+.contact-orb-wrap { position:relative;width:200px;height:200px; }
+.contact-orb { width:100%;height:100%;border-radius:50%;background:conic-gradient(from 0deg,rgba(108,99,255,.6) 0%,rgba(192,132,252,.5) 25%,rgba(96,165,250,.5) 50%,rgba(74,222,128,.4) 75%,rgba(108,99,255,.6) 100%);animation:orbSpin 8s linear infinite;filter:blur(1px); }
+@keyframes orbSpin { to { transform:rotate(360deg); } }
+.contact-orb-inner { position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:130px;height:130px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:2.5rem; }
+.contact-orbit { position:absolute;inset:-18px;border-radius:50%;border:1px dashed rgba(108,99,255,.2);animation:orbSpin 12s linear infinite reverse; }
+.contact-orbit::after { content:'';position:absolute;top:-4px;left:50%;width:8px;height:8px;border-radius:50%;background:var(--accent2);margin-left:-4px; }
+.contact-links { width:100%;display:flex;flex-direction:column;gap:10px; }
+.contact-link-row { display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:var(--radius);background:var(--bg3);border:1px solid var(--border);text-decoration:none;color:var(--text);font-size:.82rem;transition:border-color .2s,background .2s; }
+.contact-link-row:hover { border-color:var(--accent);background:rgba(108,99,255,.06); }
+.contact-link-left { display:flex;align-items:center;gap:10px; }
+.contact-link-icon { width:30px;height:30px;border-radius:7px;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:.85rem; }
+.contact-link-name { font-weight:500; }
+.contact-link-val { font-size:.7rem;color:var(--muted);font-family:var(--mono); }
+.contact-link-arrow { font-size:.75rem;color:var(--muted2); }
+
+footer { padding:1.5rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:.75rem;color:var(--muted); }
+footer span { font-family:var(--mono); }
+
+/* FADE IN */
+.fade-in { opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease; }
+.fade-in.visible { opacity:1;transform:none; }
+.fade-in.d1 { transition-delay:.1s; } .fade-in.d2 { transition-delay:.2s; } .fade-in.d3 { transition-delay:.3s; }
+
+/* DIVIDERS */
+.sec-divider { height:1px;background:var(--border);margin:0; }
+
+@media(max-width:720px){
+  nav { padding:0 1rem; } .nav-links { display:none; }
+  #home,#about,#transcript,#contact { padding:4rem 1.2rem; }
+  .contact-grid { grid-template-columns:1fr; } .contact-visual { display:none; }
+  .skills-two { grid-template-columns:1fr; }
+  .edu-card { grid-template-columns:1fr; }
+  .t-stats-grid { gap:1.5rem; }
+  .transcript-header { flex-direction:column;align-items:flex-start; }
+  .tl-item { grid-template-columns:1fr 2px 1fr; }
+  .achieve-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+
+<div id="loader">
+  <div class="loader-name">Võ Nguyễn <span>Bảo Ngọc</span></div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+</div>
+
+<nav>
+  <div class="nav-left">
+    <a href="#home" class="nav-logo">BN</a>
+    <ul class="nav-links">
+      <li><a href="#home" class="active">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#transcript">Transcript</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+  <div class="nav-status"><div class="status-dot"></div>Available</div>
+</nav>
+
+<main>
+
+<!-- ══ HOME ══ -->
+<section id="home">
+  <div class="home-glow"></div>
+  <div class="home-grid-bg"></div>
+  <div class="home-content">
+    <div class="home-badge">CS Student · HCMUT · TP. Hồ Chí Minh</div>
+    <h1 class="home-title">
+      Hello, I'm<br><span class="name">Bảo Ngọc</span> 👋
+    </h1>
+    <p class="home-sub">
+      Second-year CS student at HCMUT. Đam mê AI, robotics và UAV systems. GPA 3.7/4.0 · IELTS 7.0.
+    </p>
+    <div class="home-tags">
+      <span class="home-tag">Python</span>
+      <span class="home-tag">C++</span>
+      <span class="home-tag">Java</span>
+      <span class="home-tag">R</span>
+      <span class="home-tag">UAV Navigation</span>
+      <span class="home-tag">Agentic AI</span>
+      <span class="home-tag">RAG</span>
+    </div>
+    <div class="home-btns">
+      <a href="#about" class="btn btn-primary">About me →</a>
+      <a href="#contact" class="btn btn-outline">Get in touch</a>
+    </div>
+  </div>
+  <div class="home-scroll"><div class="home-scroll-line"></div>Scroll</div>
+</section>
+
+<!-- ══ ABOUT ══ -->
+<section id="about">
+  <div class="sec-inner">
+
+    <!-- Greeting -->
+    <div class="fade-in" style="margin-bottom:3rem;">
+      <h1 class="about-greeting">Hello, I'm <span class="nc">Bảo Ngọc</span> 👋</h1>
+      <p class="about-sub">
+        Second-year Computer Science student at HCMUT focusing on AI and autonomous systems. Research interests: intelligent robotics, UAV navigation, and adaptive AI systems for sustainable infrastructure and smart agriculture.
+      </p>
+      <p class="about-sub" style="margin-top:.5rem;">
+        <span style="color:var(--accent2);font-weight:600;">ngoc.vo2452840@hcmut.edu.vn</span> &nbsp;·&nbsp;
+        <span style="color:var(--muted);">0869 255 158</span> &nbsp;·&nbsp;
+        <a href="https://github.com/baongoc2006" target="_blank" style="color:var(--accent2);text-decoration:none;">github.com/baongoc2006</a>
+      </p>
+    </div>
+
+    <!-- Skills -->
+    <div class="fade-in d1">
+      <div class="sec-heading" style="font-size:1.4rem;margin-bottom:1rem;">My Skills</div>
+
+      <div class="skills-label">Programming Languages</div>
+      <div class="skills-icons">
+        <div class="sic"><span class="sic-text" style="color:#659ad2">C++</span><span class="tt">C++</span></div>
+        <div class="sic">🐍<span class="tt">Python</span></div>
+        <div class="sic"><span class="sic-text" style="color:#276dc3">R</span><span class="tt">R</span></div>
+        <div class="sic">☕<span class="tt">Java (basic)</span></div>
+      </div>
+
+      <div class="skills-two">
+        <div>
+          <div class="skills-label">Data & ML</div>
+          <div class="skills-icons">
+            <div class="sic">🐼<span class="tt">Pandas</span></div>
+            <div class="sic">🔢<span class="tt">NumPy</span></div>
+            <div class="sic">📊<span class="tt">Matplotlib</span></div>
+            <div class="sic"><span class="sic-text" style="color:#e84d4d;font-size:.65rem">ggplot2</span><span class="tt">ggplot2</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="skills-label">Tools & Platforms</div>
+          <div class="skills-icons">
+            <div class="sic"><span class="sic-text" style="color:#f05032">Git</span><span class="tt">Git / GitHub</span></div>
+            <div class="sic">🐧<span class="tt">Linux</span></div>
+            <div class="sic">🐳<span class="tt">Docker</span></div>
+            <div class="sic"><span class="sic-text" style="color:#f9ab00;font-size:.62rem">Colab</span><span class="tt">Google Colab</span></div>
+            <div class="sic"><span class="sic-text" style="color:#20beff;font-size:.65rem">Kaggle</span><span class="tt">Kaggle</span></div>
+            <div class="sic"><span class="sic-text" style="color:#75aadb;font-size:.65rem">RStudio</span><span class="tt">RStudio</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Education -->
+    <div class="fade-in d2" style="margin-top:3.5rem;">
+      <div class="sec-heading" style="font-size:1.4rem;margin-bottom:1rem;">Education</div>
+      <div class="edu-cards">
+        <div class="edu-card">
+          <div>
+            <div class="edu-degree">Bachelor of Computer Science</div>
+            <div class="edu-school">Ho Chi Minh University of Technology — HCMUT / VNUHCM</div>
+            <ul class="edu-bullets">
+              <li>GPA: <span class="hl">3.7 / 4.0</span></li>
+              <li>Discrete Structures, Data Structures &amp; Algorithms, Computer Architecture</li>
+              <li>Mathematical Modeling, Probability and Statistics</li>
+              <li><span class="hl">Academic Incentive Scholarship</span> — Semester 1 &amp; 2, academic year 2024–2025</li>
+            </ul>
+            <span class="edu-badge">2nd year</span>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:1.5rem;margin-bottom:6px;">🎓</div>
+            <div class="edu-period">Sept 2024 – now</div>
+          </div>
+        </div>
+        <div class="edu-card">
+          <div>
+            <div class="edu-degree">Phu Nhuan High School</div>
+            <div class="edu-school">Ho Chi Minh City</div>
+            <ul class="edu-bullets">
+              <li>Grade 10: <span class="hl">9.3/10</span> · Grade 11: <span class="hl">9.2/10</span> · Grade 12: <span class="hl">9.4/10</span></li>
+              <li>Ranking <span class="hl">1st in class</span> — sustained academic excellence across all subjects</li>
+            </ul>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:1.5rem;margin-bottom:6px;">🏫</div>
+            <div class="edu-period">2021 – 2024</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Achievements -->
+    <div class="fade-in d3" style="margin-top:3rem;">
+      <div class="sec-heading" style="font-size:1.4rem;margin-bottom:1rem;">Achievements & Certificates</div>
+      <div class="achieve-grid">
+        <div class="achieve-card">
+          <div class="achieve-icon">🏆</div>
+          <div>
+            <div class="achieve-title">Academic Incentive Scholarship</div>
+            <div class="achieve-sub">HCMUT — Semester 1 &amp; 2, Academic Year 2024–2025</div>
+          </div>
+        </div>
+        <div class="achieve-card">
+          <div class="achieve-icon">🌐</div>
+          <div>
+            <div class="achieve-title">IELTS 7.0</div>
+            <div class="achieve-sub">International English Language Testing System — 2024</div>
+          </div>
+        </div>
+        <div class="achieve-card">
+          <div class="achieve-icon">⚛️</div>
+          <div>
+            <div class="achieve-title">Second Prize — Physics Olympiad</div>
+            <div class="achieve-sub">City Level — Ho Chi Minh City, 2024</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Research Experiences -->
+    <div class="fade-in" style="margin-top:4rem;">
+      <div class="sec-heading">Research Experiences</div>
+      <div class="timeline">
+
+        <div class="tl-item">
+          <div class="tl-content">
+            <div class="tl-role">Undergraduate Researcher</div>
+            <div class="tl-org">Agentic AI &amp; Generative AI Systems · HCMUT</div>
+            <ul class="tl-bullets">
+              <li>Built Retrieval-Augmented Generation (RAG) prototypes for document-based QA systems.</li>
+              <li>Experimented with fine-tuning and evaluated model alignment strategies.</li>
+              <li>Analyzed LLM reasoning and explored scalable AI deployment in resource-constrained environments.</li>
+            </ul>
+          </div>
+          <div class="tl-line"><div class="tl-dot"></div><div class="tl-connector"></div></div>
+          <div class="tl-meta">
+            <div class="tl-icon-circle">🤖</div>
+            <div class="tl-period">Dec 2025 – now</div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-meta">
+            <div class="tl-icon-circle">🛸</div>
+            <div class="tl-period">April 2025 – now</div>
+          </div>
+          <div class="tl-line"><div class="tl-dot"></div><div class="tl-connector"></div></div>
+          <div class="tl-content">
+            <div class="tl-role">Undergraduate Researcher</div>
+            <div class="tl-org">UAV Localization Project · HCMUT</div>
+            <ul class="tl-bullets">
+              <li>Developed an image-processing pipeline to localize UAVs without GNSS through aerial-map matching.</li>
+              <li>Designed benchmarking experiments to assess accuracy and runtime efficiency.</li>
+              <li>Investigated deployment for rural mapping and low-cost environmental monitoring.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-content">
+            <div class="tl-role">Undergraduate Researcher</div>
+            <div class="tl-org">UAV Navigation in GPS-Denied Environments · HCMUT</div>
+            <ul class="tl-bullets">
+              <li>Led a 5-member team to design and integrate a LiDAR-based UAV navigation pipeline using the LOAM framework.</li>
+              <li>Implemented and benchmarked 3D feature extraction and motion estimation modules.</li>
+              <li>Evaluated system performance for disaster response and infrastructure monitoring.</li>
+            </ul>
+          </div>
+          <div class="tl-line"><div class="tl-dot"></div><div class="tl-connector"></div></div>
+          <div class="tl-meta">
+            <div class="tl-icon-circle">🚁</div>
+            <div class="tl-period">Sept 2024 – Dec 2025</div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-meta">
+            <div class="tl-icon-circle">📡</div>
+            <div class="tl-period">Dec 2025 – now</div>
+          </div>
+          <div class="tl-line"><div class="tl-dot"></div><div class="tl-connector"></div></div>
+          <div class="tl-content">
+            <div class="tl-role">Participant — ABC 2026</div>
+            <div class="tl-org">"Activity &amp; Location Recognition in Care Facility" Coding Challenge</div>
+            <ul class="tl-bullets">
+              <li>Developed ML models for activity and indoor localization using wearable sensor and BLE data.</li>
+              <li>Performed feature engineering and evaluated performance using Macro F1-score.</li>
+              <li>Explored applications in accessible healthcare and elderly support systems.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Extracurricular Activities -->
+    <div class="fade-in" style="margin-top:4rem;">
+      <div class="sec-heading">Extracurricular Activities</div>
+      <div class="timeline">
+
+        <div class="tl-item">
+          <div class="tl-content">
+            <div class="tl-role">Member — Big Data Club</div>
+            <div class="tl-org">HCMUT</div>
+            <ul class="tl-bullets">
+              <li>Participated in workshops, technical sharing sessions, and team-based projects on data analytics and ML.</li>
+              <li>Explored data processing workflows, built end-to-end analysis pipelines in Python.</li>
+            </ul>
+          </div>
+          <div class="tl-line"><div class="tl-dot" style="background:var(--teal);box-shadow:0 0 0 1px var(--teal)"></div><div class="tl-connector" style="background:linear-gradient(to bottom,var(--teal),var(--border))"></div></div>
+          <div class="tl-meta">
+            <div class="tl-icon-circle" style="background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.2);">📊</div>
+            <div class="tl-period">Oct 2025 – now</div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-meta">
+            <div class="tl-icon-circle" style="background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.2);">🚌</div>
+            <div class="tl-period">Nov 2025</div>
+          </div>
+          <div class="tl-line"><div class="tl-dot" style="background:var(--teal);box-shadow:0 0 0 1px var(--teal)"></div><div class="tl-connector" style="background:linear-gradient(to bottom,var(--teal),var(--border))"></div></div>
+          <div class="tl-content">
+            <div class="tl-role">Participant — Bus Data Analytics Hackathon 2025</div>
+            <div class="tl-org">HCMUT</div>
+            <ul class="tl-bullets">
+              <li>Worked with large-scale bus route datasets for EDA and visualization using Python.</li>
+              <li>Proposed data-driven strategies to improve service reliability and reduce peak-hour congestion.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-content">
+            <div class="tl-role">Class Vice Monitor — Academic Affairs</div>
+            <div class="tl-org">Computer Science Cohort · HCMUT</div>
+            <ul class="tl-bullets">
+              <li>Supported classmates in academic matters and acted as bridge between students and faculty.</li>
+              <li>Assisted lecturers with class management tasks.</li>
+            </ul>
+          </div>
+          <div class="tl-line"><div class="tl-dot" style="background:var(--teal);box-shadow:0 0 0 1px var(--teal)"></div><div class="tl-connector" style="background:linear-gradient(to bottom,var(--teal),var(--border))"></div></div>
+          <div class="tl-meta">
+            <div class="tl-icon-circle" style="background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.2);">📚</div>
+            <div class="tl-period">Aug 2025 – now</div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-meta">
+            <div class="tl-icon-circle" style="background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.2);">🏫</div>
+            <div class="tl-period">Sept 2025 – now</div>
+          </div>
+          <div class="tl-line"><div class="tl-dot" style="background:var(--teal);box-shadow:0 0 0 1px var(--teal)"></div><div class="tl-connector" style="background:linear-gradient(to bottom,var(--teal),var(--border))"></div></div>
+          <div class="tl-content">
+            <div class="tl-role">Student Assistant — Academic Affairs Office</div>
+            <div class="tl-org">HCMUT</div>
+            <ul class="tl-bullets">
+              <li>Supported administrative tasks and assisted students with academic procedures.</li>
+              <li>Helped staff with documentation and coordination.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-content">
+            <div class="tl-role">Volunteer — Exam Support Campaign 2025</div>
+            <div class="tl-org">HCMUT</div>
+            <ul class="tl-bullets">
+              <li>Assisted candidates and parents during the national entrance exam — guidance and logistics coordination.</li>
+            </ul>
+          </div>
+          <div class="tl-line"><div class="tl-dot" style="background:var(--teal);box-shadow:0 0 0 1px var(--teal)"></div><div class="tl-connector" style="background:linear-gradient(to bottom,var(--teal),var(--border))"></div></div>
+          <div class="tl-meta">
+            <div class="tl-icon-circle" style="background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.2);">🙋</div>
+            <div class="tl-period">Jul 2025</div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-meta">
+            <div class="tl-icon-circle" style="background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.2);">🎓</div>
+            <div class="tl-period">July 2025</div>
+          </div>
+          <div class="tl-line"><div class="tl-dot" style="background:var(--teal);box-shadow:0 0 0 1px var(--teal)"></div><div class="tl-connector" style="background:linear-gradient(to bottom,var(--teal),var(--border))"></div></div>
+          <div class="tl-content">
+            <div class="tl-role">Participant — CSE Summer School 2025</div>
+            <div class="tl-org">Topic: AI Agents · HCMUT</div>
+            <ul class="tl-bullets">
+              <li>Attended intensive program on AI &amp; Generative AI including expert lectures and hands-on coding workshops.</li>
+              <li>Participated in career networking sessions.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-content">
+            <div class="tl-role">Event Volunteer — Admission Counseling Fair</div>
+            <div class="tl-org">HCMUT</div>
+            <ul class="tl-bullets">
+              <li>Provided logistical assistance and guided participants at the university admission counseling event.</li>
+            </ul>
+          </div>
+          <div class="tl-line"><div class="tl-dot" style="background:var(--teal);box-shadow:0 0 0 1px var(--teal)"></div><div class="tl-connector" style="background:linear-gradient(to bottom,var(--teal),var(--border))"></div></div>
+          <div class="tl-meta">
+            <div class="tl-icon-circle" style="background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.2);">🎪</div>
+            <div class="tl-period">Mar 2025</div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-meta">
+            <div class="tl-icon-circle" style="background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.2);">🎉</div>
+            <div class="tl-period">Nov 2024</div>
+          </div>
+          <div class="tl-line"><div class="tl-dot" style="background:var(--teal);box-shadow:0 0 0 1px var(--teal)"></div><div class="tl-connector"></div></div>
+          <div class="tl-content">
+            <div class="tl-role">Event Support Volunteer</div>
+            <div class="tl-org">Youth Union Office · Faculty of CSE · HCMUT</div>
+            <ul class="tl-bullets">
+              <li>Assisted in event organization — logistics preparation and venue setup.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- ══ TRANSCRIPT ══ -->
+<section id="transcript">
+  <div class="transcript-inner">
+    <div class="transcript-header fade-in">
+      <div class="transcript-title">📋 Bảng điểm sinh viên</div>
+      <div class="transcript-actions">
+        <button class="t-btn t-btn-green">🌟 Quản lý</button>
+        <button class="t-btn t-btn-purple">📤 Xuất</button>
+        <button class="t-btn t-btn-red">💾 Lưu</button>
+        <button class="t-btn t-btn-blue">📊 Phân tích</button>
+      </div>
+    </div>
+    <div class="t-tabs fade-in">
+      <div class="t-tab active" onclick="switchTab(this)">🗂 Tổng hợp</div>
+      <div class="t-tab" onclick="switchTab(this)">📅 Theo học kỳ ▾</div>
+    </div>
+    <div class="t-filters fade-in">
+      <span class="t-filter-label">Khối kiến thức</span>
+      <select class="t-filter-select" id="filter-block" onchange="filterTable()">
+        <option value="">Tất cả</option>
+        <option value="Toán">Toán và KH tự nhiên</option>
+        <option value="CNTT">Cơ sở CNTT</option>
+        <option value="Chuyên">Chuyên ngành</option>
+      </select>
+      <span class="t-filter-label" style="margin-left:8px;">Điểm số</span>
+      <input class="t-filter-input" id="fsf" placeholder="Từ" type="number" oninput="filterTable()">
+      <span class="t-filter-sep">–</span>
+      <input class="t-filter-input" id="fst" placeholder="Đến" type="number" oninput="filterTable()">
+      <span class="t-filter-label" style="margin-left:8px;">Tín chỉ</span>
+      <input class="t-filter-input" id="ftf" placeholder="Từ" type="number" oninput="filterTable()">
+      <span class="t-filter-sep">–</span>
+      <input class="t-filter-input" id="ftt" placeholder="Đến" type="number" oninput="filterTable()">
+      <button class="t-filter-clear" onclick="clearFilters()">✕ Xoá lọc</button>
+      <div class="t-search-wrap" style="margin-left:auto;">
+        <span class="t-search-icon">🔍</span>
+        <input class="t-search" id="search-q" placeholder="Tìm mã/tên môn..." oninput="filterTable()">
+      </div>
+    </div>
+    <div class="t-stats fade-in">
+      <div class="t-stats-title">📊 Thống kê tổng hợp</div>
+      <div class="t-stats-grid">
+        <div><div class="t-stat-label">Tổng số tín chỉ tích luỹ</div><div class="t-stat-val green" id="st-tc">—</div></div>
+        <div><div class="t-stat-label">Điểm trung bình hệ 4</div><div class="t-stat-val blue" id="st-g4">—</div></div>
+        <div><div class="t-stat-label">Điểm trung bình hệ 10</div><div class="t-stat-val purple" id="st-g10">—</div></div>
+        <div><div class="t-stat-label">Dữ liệu khuyết</div><div class="t-stat-val muted">0</div></div>
+      </div>
+    </div>
+    <div id="t-tables" class="fade-in"></div>
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- ══ CONTACT ══ -->
+<section id="contact">
+  <div class="contact-inner">
+    <h2 class="contact-title fade-in">Get in Touch 👋</h2>
+    <div class="contact-grid">
+      <div class="fade-in">
+        <div class="contact-form-group">
+          <label class="contact-label">Name</label>
+          <input class="contact-input" placeholder="Your Name" id="c-name">
+        </div>
+        <div class="contact-form-group">
+          <label class="contact-label">Email</label>
+          <input class="contact-input" placeholder="EX: your_email@gmail.com" id="c-email" type="email">
+        </div>
+        <div class="contact-form-group">
+          <label class="contact-label">Your Message</label>
+          <textarea class="contact-textarea" placeholder="Write your thoughts here..." id="c-msg"></textarea>
+        </div>
+        <button class="contact-submit" onclick="submitContact()">Submit</button>
+        <div id="c-ok" style="display:none;margin-top:12px;padding:10px 14px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);border-radius:8px;font-size:.82rem;color:var(--green);">
+          ✓ Cảm ơn! Tin nhắn của bạn đã được gửi.
+        </div>
+      </div>
+      <div class="contact-visual fade-in d1">
+        <div class="contact-orb-wrap">
+          <div class="contact-orb"></div>
+          <div class="contact-orbit"></div>
+          <div class="contact-orb-inner">💻</div>
+        </div>
+        <div class="contact-links">
+          <a href="mailto:ngoc.vo2452840@hcmut.edu.vn" class="contact-link-row">
+            <div class="contact-link-left">
+              <div class="contact-link-icon">✉️</div>
+              <div><div class="contact-link-name">Email</div><div class="contact-link-val">ngoc.vo2452840@hcmut.edu.vn</div></div>
+            </div>
+            <span class="contact-link-arrow">↗</span>
+          </a>
+          <a href="https://github.com/baongoc2006" target="_blank" class="contact-link-row">
+            <div class="contact-link-left">
+              <div class="contact-link-icon">🐙</div>
+              <div><div class="contact-link-name">GitHub</div><div class="contact-link-val">github.com/baongoc2006</div></div>
+            </div>
+            <span class="contact-link-arrow">↗</span>
+          </a>
+          <a href="tel:0869255158" class="contact-link-row">
+            <div class="contact-link-left">
+              <div class="contact-link-icon">📱</div>
+              <div><div class="contact-link-name">Phone</div><div class="contact-link-val">0869 255 158</div></div>
+            </div>
+            <span class="contact-link-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <span>Võ Nguyễn Bảo Ngọc · ngoc.vo2452840@hcmut.edu.vn</span>
+  <span>Portfolio 2025 ♥</span>
+</footer>
+
+<script>
+// LOADER
+window.addEventListener('load', () => setTimeout(() => document.getElementById('loader').classList.add('done'), 950));
+
+// CURSOR
+const dot = document.getElementById('cur-dot'), ring = document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; });
+(function ar(){ rx+=(mx-rx)*.13; ry+=(my-ry)*.13; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(ar); })();
+document.querySelectorAll('a,button,.t-tab,.sic,.contact-link-row,.t-btn,.edu-card,.achieve-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('hov'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('hov'));
+});
+
+// SCROLL REVEAL
+const obs = new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.07});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+// NAV ACTIVE
+const secs=['home','about','transcript','contact'];
+window.addEventListener('scroll',()=>{
+  let cur='';
+  secs.forEach(id=>{ const s=document.getElementById(id); if(s&&window.scrollY>=s.offsetTop-80) cur=id; });
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur));
+});
+
+// TRANSCRIPT DATA
+const courses = [
+  { block:'Toán', code:'C01007', name:'Cấu trúc Rời rạc cho Khoa học Máy tính', tc:4, grade:'B',  score:7.60, g4:3.0,  comp:[{l:'Kiểm tra',v:'8 (30%)'},{l:'Bài tập lớn',v:'8.5 (20%)'}] },
+  { block:'Toán', code:'C02011', name:'Mô hình hóa Toán học',                   tc:3, grade:'B+', score:8.00, g4:3.5,  comp:[{l:'Kiểm tra',v:'8.5 (40%)'},{l:'Bài tập lớn',v:'8 (20%)'}] },
+  { block:'Toán', code:'MT1003', name:'Giải tích 1',                            tc:4, grade:'A',  score:9.40, g4:4.0,  comp:[{l:'Kiểm tra',v:'7.5 (25%)'},{l:'Bài tập',v:'10 (5%)'}] },
+  { block:'Toán', code:'MT1005', name:'Giải tích 2',                            tc:4, grade:'A+', score:9.70, g4:4.0,  comp:[{l:'Kiểm tra',v:'9 (25%)'},{l:'Bài tập',v:'10 (5%)'}] },
+  { block:'CNTT', code:'CO1001', name:'Nhập môn Điện toán',                     tc:3, grade:'A',  score:9.20, g4:4.0,  comp:[{l:'Bài tập',v:'9.5 (40%)'},{l:'Kiểm tra',v:'9 (30%)'}] },
+  { block:'CNTT', code:'CO1002', name:'Lập trình Hướng đối tượng',              tc:4, grade:'A+', score:9.80, g4:4.0,  comp:[{l:'BTL',v:'10 (30%)'},{l:'Cuối kỳ',v:'9.5 (50%)'}] },
+  { block:'CNTT', code:'CO2003', name:'Cấu trúc Dữ liệu và Thuật toán',        tc:4, grade:'B+', score:8.20, g4:3.5,  comp:[{l:'Kiểm tra',v:'8 (30%)'},{l:'Cuối kỳ',v:'8.5 (50%)'}] },
+  { block:'Chuyên', code:'CO3001', name:'Cơ sở Trí tuệ Nhân tạo',             tc:3, grade:'B',  score:7.80, g4:3.0,  comp:[{l:'BTL',v:'8 (30%)'},{l:'Cuối kỳ',v:'7.5 (50%)'}] },
+  { block:'Chuyên', code:'CO3005', name:'Phân tích Dữ liệu',                  tc:3, grade:'A',  score:9.00, g4:4.0,  comp:[{l:'BTL',v:'9.5 (40%)'},{l:'Cuối kỳ',v:'8.5 (40%)'}] },
+];
+
+const GROUPS = [
+  {key:'Toán',   label:'Toán và KH tự nhiên', icon:'📐'},
+  {key:'CNTT',   label:'Cơ sở CNTT',           icon:'💻'},
+  {key:'Chuyên', label:'Chuyên ngành',          icon:'🎯'},
+];
+
+function gc(g){ if(g.startsWith('A')) return 'grade-A'; if(g.startsWith('B')) return 'grade-B'; return 'grade-C'; }
+
+function renderTranscript(data){
+  let tc=0, sw4=0, sw10=0;
+  data.forEach(c=>{ tc+=c.tc; sw4+=c.g4*c.tc; sw10+=c.score*c.tc; });
+  document.getElementById('st-tc').textContent=tc||'—';
+  document.getElementById('st-g4').textContent=tc?(sw4/tc).toFixed(2):'—';
+  document.getElementById('st-g10').textContent=tc?(sw10/tc).toFixed(2):'—';
+  const container=document.getElementById('t-tables');
+  container.innerHTML='';
+  GROUPS.forEach(g=>{
+    const rows=data.filter(c=>c.block===g.key);
+    if(!rows.length) return;
+    const div=document.createElement('div');
+    div.className='t-group';
+    div.innerHTML=`
+      <div class="t-group-title"><span>${g.icon}</span>${g.label} (${rows.length} môn)</div>
+      <table class="t-table">
+        <thead><tr>
+          <th style="width:88px">Mã môn</th><th>Tên môn</th>
+          <th style="width:66px;text-align:center">Số TC</th>
+          <th style="width:76px;text-align:center">Điểm chữ</th>
+          <th style="width:76px;text-align:center">Điểm số</th>
+          <th style="width:76px;text-align:center">Hệ 4</th>
+          <th style="width:195px;text-align:right">Điểm thành phần</th>
+        </tr></thead>
+        <tbody>${rows.map(c=>`
+          <tr>
+            <td class="t-code">${c.code}</td>
+            <td>${c.name}</td>
+            <td style="text-align:center">${c.tc}</td>
+            <td style="text-align:center"><span class="grade-badge ${gc(c.grade)}">${c.grade}</span></td>
+            <td style="text-align:center" class="t-score">${c.score.toFixed(2)}</td>
+            <td style="text-align:center" class="t-score">${c.g4}</td>
+            <td style="text-align:right"><div class="t-component">
+              ${c.comp.map(p=>`${p.l}: <span>${p.v}</span>`).join('<br>')}
+              <div><span class="link-more" onclick="alert('Chi tiết: ${c.name}')">Xem tất cả</span></div>
+            </div></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>`;
+    container.appendChild(div);
+  });
+}
+
+function filterTable(){
+  const bl=document.getElementById('filter-block').value;
+  const sf=parseFloat(document.getElementById('fsf').value)||0;
+  const st=parseFloat(document.getElementById('fst').value)||10;
+  const tf=parseInt(document.getElementById('ftf').value)||0;
+  const tt=parseInt(document.getElementById('ftt').value)||99;
+  const q=document.getElementById('search-q').value.toLowerCase();
+  renderTranscript(courses.filter(c=>
+    (!bl||c.block===bl)&&c.score>=sf&&c.score<=st&&c.tc>=tf&&c.tc<=tt&&
+    (!q||c.code.toLowerCase().includes(q)||c.name.toLowerCase().includes(q))
+  ));
+}
+function clearFilters(){
+  ['filter-block','fsf','fst','ftf','ftt','search-q'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  renderTranscript(courses);
+}
+function switchTab(el){ document.querySelectorAll('.t-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
+
+renderTranscript(courses);
+
+// CONTACT
+function submitContact(){
+  const n=document.getElementById('c-name').value.trim();
+  const e=document.getElementById('c-email').value.trim();
+  const m=document.getElementById('c-msg').value.trim();
+  if(!n||!e||!m){alert('Vui lòng điền đầy đủ thông tin!');return;}
+  document.getElementById('c-ok').style.display='block';
+  ['c-name','c-email','c-msg'].forEach(id=>document.getElementById(id).value='');
+  setTimeout(()=>document.getElementById('c-ok').style.display='none',4500);
+}
+</script>
+</body>
+</html>
